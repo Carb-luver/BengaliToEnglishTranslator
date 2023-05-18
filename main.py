@@ -15,61 +15,44 @@ import sys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
 import time
-import clipboard as c
-import googletrans
-from googletrans import Translator
-from tkinter import *
-from translate import Translator
-import translators
-from deep_translator import MyMemoryTranslator
-from deep_translator import GoogleTranslator
-from google_trans_new import google_translator
 
-
-
+#tesseract environment variables
 os.environ["TESS_PREFIX"] = "/opt/homebrew/Cellar/tesseract/5.3.1/share/tessdata/"
-
 pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
 bengali_data = "images/Bengali.traineddata"
-img = cv2.imread('images/page1.png')
-grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
 pytesseract.pytesseract.tessdata_dir_config = '--tessdata-dir "/opt/homebrew/Cellar/tesseract/5.3.1/share/tessdata/"'
 custom_config = f'-l ben+eng --tessdata-dir "{bengali_data}"'
+
+#extract bangla text from image with tesseract
+img = cv2.imread('images/page1.png')
+grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 banglaText = pytesseract.image_to_string(grayImg, lang='ben')
 banglaSentences = banglaText.split('\n')
 
+#navigate to google translate home page
 chrome_driver = webdriver.Chrome()
 chrome_driver.get('https://translate.google.com/')
 chrome_driver.maximize_window()
 if not "Google" in chrome_driver.title:
     raise Exception("Could not load page")
 
+#send bangla text to google translate input box
 translationInput = chrome_driver.find_element(By.CLASS_NAME, "er8xn")
 for sentence in banglaSentences:
     translationInput.send_keys(sentence)
-    time.sleep(1)
+time.sleep(15)
 
+#open file and write bangla text
 f = open("englishTranslationOutput.txt", "a")
 f.write(banglaText)
 f.write("\n")
 className = "ryNqvb"
 translationOutputs = chrome_driver.find_elements(By.CLASS_NAME, className)
-# translationOutput = translationOutputs.pop()
 
+#write english translation in file after bangla text
 for output in translationOutputs:
     f.write(output.text)
     f.write("\n")
 f.close()
-# copyButton = chrome_driver.find_element(By.CLASS_NAME, "gb_pd gb_cd gb_dd")
-# copyButton = chrome_driver.find_element(By.XPATH, '//button[3]')
-# copyButton.click()
-# englishText = c.paste()
-# f = open("englishTranslationOutput.txt", "a")
-# f.write(sentence)
-# f.write("\n")
 
-
-# clearButton = chrome_driver.find_element(By.CLASS_NAME, "VfPpkd-Bz112c-RLmnJb")
-# clearButton.click()
 
