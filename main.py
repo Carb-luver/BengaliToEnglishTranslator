@@ -46,10 +46,10 @@ time.sleep(15)
 f = open("englishTranslationOutput.txt", "a")
 f.write(banglaText)
 f.write("\n")
+
+#write english translation in file after bangla text\
 className = "ryNqvb"
 translationOutputs = chrome_driver.find_elements(By.CLASS_NAME, className)
-
-#write english translation in file after bangla text
 for output in translationOutputs:
     f.write(output.text)
     f.write("\n")
