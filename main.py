@@ -8,10 +8,14 @@ import pytesseract
 from PIL import Image
 import os
 
+import pytest
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+import sys
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.keys import Keys
-
-
+import time
+import clipboard as c
 import googletrans
 from googletrans import Translator
 from tkinter import *
@@ -33,33 +37,39 @@ grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 pytesseract.pytesseract.tessdata_dir_config = '--tessdata-dir "/opt/homebrew/Cellar/tesseract/5.3.1/share/tessdata/"'
 custom_config = f'-l ben+eng --tessdata-dir "{bengali_data}"'
 banglaText = pytesseract.image_to_string(grayImg, lang='ben')
-# print(banglaText)
-banglaWords = banglaText.split(' ')
-print(banglaWords)
-print(banglaWords[1])
-word1 = banglaWords[0]
+banglaSentences = banglaText.split('\n')
 
-translator = google_translator()
-englishText = translator.translate(word1,lang_tgt='en')
-print(englishText)
-# englishText = translator.translate(banglaWords[1],lang_tgt='en')
-# print(englishText)
+chrome_driver = webdriver.Chrome()
+chrome_driver.get('https://translate.google.com/')
+chrome_driver.maximize_window()
+if not "Google" in chrome_driver.title:
+    raise Exception("Could not load page")
+
+translationInput = chrome_driver.find_element(By.CLASS_NAME, "er8xn")
+for sentence in banglaSentences:
+    translationInput.send_keys(sentence)
+    time.sleep(1)
+
+f = open("englishTranslationOutput.txt", "a")
+f.write(banglaText)
+f.write("\n")
+className = "ryNqvb"
+translationOutputs = chrome_driver.find_elements(By.CLASS_NAME, className)
+# translationOutput = translationOutputs.pop()
+
+for output in translationOutputs:
+    f.write(output.text)
+    f.write("\n")
+f.close()
+# copyButton = chrome_driver.find_element(By.CLASS_NAME, "gb_pd gb_cd gb_dd")
+# copyButton = chrome_driver.find_element(By.XPATH, '//button[3]')
+# copyButton.click()
+# englishText = c.paste()
+# f = open("englishTranslationOutput.txt", "a")
+# f.write(sentence)
+# f.write("\n")
 
 
+# clearButton = chrome_driver.find_element(By.CLASS_NAME, "VfPpkd-Bz112c-RLmnJb")
+# clearButton.click()
 
-# translator = Translator(from_lang= 'Bengali',to_lang='English')
-# banglaTextSubString = banglaText[0:5]
-# Translation = translator.translate(banglaTextSubString)
-#
-# print(Translation)
-
-# print(googletrans.LANGUAGES)
-#
-# translator = Translator(service_urls=['translate.google.com'])
-# print("translator instantiated")
-# translated_text = translator.translate('.')
-# # translated_text = translator.translate(banglaText)
-# print(translated_text)
-
-# englishText = translators.google(banglaText, from_language='bn', to_language='en')
-# print(englishText)

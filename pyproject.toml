@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "pythonworkspace"
+version = "0.1.0"
+description = ""
+authors = ["Carb-luver <mnt19@pitt.edu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.30.0"
+pytest = "^7.3.1"
+pytest-xdist = "^3.3.0"
+selenium = "^4.9.1"
+autopep8 = "^2.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
